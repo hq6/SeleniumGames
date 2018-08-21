@@ -3,3 +3,8 @@ This is a list of references I found useful for learning selenium.
 http://www.automationtestinghub.com/selenium-3-0-launch-firefox-with-geckodriver/
 https://www.guru99.com/execute-javascript-selenium-webdriver.html
 https://seleniumhq.github.io/selenium/docs/api/java/
+https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/WebElement.html
+https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/support/ui/WebDriverWait.html
+https://selenium-python.readthedocs.io/waits.html
+https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/support/ui/ExpectedConditions.html
+https://seleniumhq.github.io/selenium/docs/api/java/org/openqa/selenium/By.html
