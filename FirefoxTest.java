@@ -56,8 +56,7 @@ public class FirefoxTest {
         driver.get("http://www.google.com");
         WebElement element = new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.name("q")));
         WebElement img = insertRedDot(js);
-        System.out.println(img.getAttribute("id"));
-        js.executeScript("window.dot=document.getElementById(arguments[0]); document.body.onclick = function(e) {console.log(e);  dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';};", img.getAttribute("id"));
+        js.executeScript(readFile("js/add_onclick.js", Charset.defaultCharset()), img.getAttribute("id"));
         printElementBox(element);
         element.click();
     }
