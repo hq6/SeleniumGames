@@ -7,6 +7,6 @@ public class FirefoxTest {
 		WebDriver driver = new FirefoxDriver();
 		driver.get("http://www.google.com");
         JavascriptExecutor js = (JavascriptExecutor) driver;
-        js.executeScript("alert('hello world from seleinium!');");
+        js.executeScript("document.body.onclick = function(e) {console.log(e);}");
 	}
 }
