@@ -37,20 +37,28 @@ public class FirefoxTest {
         System.out.printf("Midpoint: (%d,%d)\n", loc.getX() + size.getWidth() / 2, loc.getY() + size.getHeight() / 2);
     }
 
-    public static void main(String[] args) {
-        // Common tools
-        WebDriver driver = new FirefoxDriver();
-        driver.get("http://www.google.com");
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-
-        WebElement element = new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.name("q")));
-        js.executeScript("document.body.onclick = function(e) {console.log(e);}");
-        printElementBox(element);
-        element.click();
-
-        // Play with image
+    public static WebElement insertRedDot(JavascriptExecutor js) {
+        // Set up image for mouse's last click.
         String addImageJS = readFile("js/add_image.js", Charset.defaultCharset());
         WebElement img = (WebElement) js.executeScript(addImageJS);
-        printElementBox(img);
+
+        // Wait for element to be visible
+        WebDriver driver = (WebDriver) js;
+        new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.id(img.getAttribute("id"))));
+        return img;
+    }
+
+    public static void main(String[] args) {
+        // Set up driver
+        WebDriver driver = new FirefoxDriver();
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        driver.get("http://www.google.com");
+        WebElement element = new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.name("q")));
+        WebElement img = insertRedDot(js);
+        System.out.println(img.getAttribute("id"));
+        js.executeScript("window.dot=document.getElementById(arguments[0]); document.body.onclick = function(e) {console.log(e);  dot.style.left = e.clientX + 'px'; dot.style.top = e.clientY + 'px';};", img.getAttribute("id"));
+        printElementBox(element);
+        element.click();
     }
 }
