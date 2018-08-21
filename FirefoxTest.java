@@ -1,3 +1,4 @@
+// Seleinum imports
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
@@ -8,18 +9,48 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Dimension;
 
+// Other imports
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Paths;
+
+
 public class FirefoxTest {
-	public static void main(String[] args) {
-		WebDriver driver = new FirefoxDriver();
-		driver.get("http://www.google.com");
-        JavascriptExecutor js = (JavascriptExecutor) driver;
-        WebElement element = new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.name("q")));
-        js.executeScript("document.body.onclick = function(e) {console.log(e);}");
+    static String readFile(String path, Charset encoding)
+    {
+        byte[] encoded = null;
+        try {
+            encoded = Files.readAllBytes(Paths.get(path));
+        } catch (IOException io) {
+            System.err.println("Error reading file " + path);
+            System.exit(1);
+        }
+        return new String(encoded, encoding);
+    }
+    public static void printElementBox(WebElement element) {
         Point loc = element.getLocation();
         Dimension size = element.getSize();
         System.out.println("Location: " + loc);
         System.out.println("Size:     " + size);
-        System.out.printf("Midpoint:    (%d,%d)\n", loc.getX() + size.getWidth() / 2, loc.getY() + size.getHeight() / 2);
+        System.out.printf("Midpoint: (%d,%d)\n", loc.getX() + size.getWidth() / 2, loc.getY() + size.getHeight() / 2);
+    }
+
+    public static void main(String[] args) {
+        // Common tools
+        WebDriver driver = new FirefoxDriver();
+        driver.get("http://www.google.com");
+        JavascriptExecutor js = (JavascriptExecutor) driver;
+
+        WebElement element = new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.name("q")));
+        js.executeScript("document.body.onclick = function(e) {console.log(e);}");
+        printElementBox(element);
         element.click();
-	}
+
+        // Play with image
+        String addImageJS = readFile("js/add_image.js", Charset.defaultCharset());
+        WebElement img = (WebElement) js.executeScript(addImageJS);
+        printElementBox(img);
+    }
 }
