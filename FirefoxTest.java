@@ -18,6 +18,13 @@ import java.nio.file.Paths;
 
 
 public class FirefoxTest {
+    public static void printElementBox(WebElement element) {
+        Point loc = element.getLocation();
+        Dimension size = element.getSize();
+        System.out.println("Location: " + loc);
+        System.out.println("Size:     " + size);
+        System.out.printf("Midpoint: (%d,%d)\n", loc.getX() + size.getWidth() / 2, loc.getY() + size.getHeight() / 2);
+    }
     static String readFile(String path, Charset encoding)
     {
         byte[] encoded = null;
@@ -29,23 +36,22 @@ public class FirefoxTest {
         }
         return new String(encoded, encoding);
     }
-    public static void printElementBox(WebElement element) {
-        Point loc = element.getLocation();
-        Dimension size = element.getSize();
-        System.out.println("Location: " + loc);
-        System.out.println("Size:     " + size);
-        System.out.printf("Midpoint: (%d,%d)\n", loc.getX() + size.getWidth() / 2, loc.getY() + size.getHeight() / 2);
-    }
 
-    public static WebElement insertRedDot(JavascriptExecutor js) {
+    /**
+     * Shows the last click on the currently loaded page.
+     *
+     * This function must be called on each page mouse-tracking is needed on.
+     */
+    public static void showLastClick(JavascriptExecutor js) {
         // Set up image for mouse's last click.
-        String addImageJS = readFile("js/add_image.js", Charset.defaultCharset());
-        WebElement img = (WebElement) js.executeScript(addImageJS);
+        WebElement img = (WebElement) js.executeScript(readFile("js/add_image.js", Charset.defaultCharset()));
 
         // Wait for element to be visible
         WebDriver driver = (WebDriver) js;
         new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.id(img.getAttribute("id"))));
-        return img;
+
+        // Move the image when the body is clicked.
+        js.executeScript(readFile("js/add_onclick.js", Charset.defaultCharset()), img.getAttribute("id"));
     }
 
     public static void main(String[] args) {
@@ -55,8 +61,7 @@ public class FirefoxTest {
 
         driver.get("http://www.google.com");
         WebElement element = new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.name("q")));
-        WebElement img = insertRedDot(js);
-        js.executeScript(readFile("js/add_onclick.js", Charset.defaultCharset()), img.getAttribute("id"));
+        showLastClick(js);
         printElementBox(element);
         element.click();
     }
