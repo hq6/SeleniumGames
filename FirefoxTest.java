@@ -8,14 +8,7 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.Point;
 import org.openqa.selenium.Dimension;
-
-// Other imports
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-
+import org.openqa.selenium.interactions.Actions;
 
 public class FirefoxTest {
     public static void printElementBox(WebElement element) {
@@ -34,7 +27,9 @@ public class FirefoxTest {
         driver.get("http://www.google.com");
         WebElement element = new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.name("q")));
         MouseTracker.showLastClick(js);
-        printElementBox(element);
-        element.click();
+
+        // Perform a move and click action to see where it lands.
+        Actions moveAndClick = new Actions(driver).moveToElement(element,-30,-2).doubleClick();
+        moveAndClick.perform();
     }
 }
