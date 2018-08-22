@@ -16,17 +16,21 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Paths;
 public class MouseTracker {
-    static String readFile(String path, Charset encoding)
-    {
-        byte[] encoded = null;
-        try {
-            encoded = Files.readAllBytes(Paths.get(path));
-        } catch (IOException io) {
-            System.err.println("Error reading file " + path);
-            System.exit(1);
-        }
-        return new String(encoded, encoding);
-    }
+    static String addImageJs =
+  "var img = document.createElement(\"img\");"
++ "img.src = 'data:image/svg+xml;utf8,<svg xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\" width=\"16\" height=\"16\"> <circle r=\"7\" cx=\"8\" cy=\"8\" style=\"fill:red;stroke:gray;stroke-width:0.1\"/> </svg>';"
++ "img.id = \"reddotpointer\";"
++ "img.style.zIndex = \"1000\";"
++ "img.style.position = \"absolute\";"
++ "return document.body.appendChild(img);";
+
+    static String addOnclickJs =
+  "window.dot=document.getElementById(arguments[0]);"
++ "document.body.onclick = function(e) {"
++ "    console.log(e);"
++ "    dot.style.left = (e.clientX - dot.width / 2) + 'px';"
++ "    dot.style.top = (e.clientY - dot.height / 2) + 'px';"
++ "};";
 
     /**
      * Shows the last click on the currently loaded page.
@@ -35,13 +39,13 @@ public class MouseTracker {
      */
     public static void showLastClick(JavascriptExecutor js) {
         // Set up image for mouse's last click.
-        WebElement img = (WebElement) js.executeScript(readFile("js/add_image.js", Charset.defaultCharset()));
+        WebElement img = (WebElement) js.executeScript(addImageJs);
 
         // Wait for element to be visible
         WebDriver driver = (WebDriver) js;
         new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.id(img.getAttribute("id"))));
 
         // Move the image when the body is clicked.
-        js.executeScript(readFile("js/add_onclick.js", Charset.defaultCharset()), img.getAttribute("id"));
+        js.executeScript(addOnclickJs, img.getAttribute("id"));
     }
 }
