@@ -23,14 +23,15 @@ public class FirefoxTest {
         // Set up driver
         WebDriver driver = new FirefoxDriver();
         JavascriptExecutor js = (JavascriptExecutor) driver;
-        ElementMover mover = new ElementMover(driver);
 
         driver.get("http://www.google.com");
         WebElement element = new WebDriverWait(driver, 10).until(ExpectedConditions.visibilityOfElementLocated(By.name("q")));
         MouseTracker.showLastClick(js);
 
         // Perform a move and click action to see where it lands.
-        Actions moveAndClick = mover.moveToElement(new Actions(driver), element, 0.3, 0.5);
+        ElementMover mover = new ElementMover(element);
+        Actions moveAndClick = mover.moveToElement(new Actions(driver), 0.3, 0.5);
+        moveAndClick = mover.moveToElement(new Actions(driver), 0.8, 0.5);
         moveAndClick = moveAndClick.click();
         moveAndClick.perform();
     }

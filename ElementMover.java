@@ -22,8 +22,15 @@ import org.openqa.selenium.interactions.Actions;
  * movement error-prone.
  */
 public class ElementMover {
-    public ElementMover(WebDriver driver) {
-        this.driver = driver;
+    /**
+     * Constructor.
+     *
+     * \param element
+     *     The WebElement that all movement is relative to the top-left corner
+     *     of.
+     */
+    public ElementMover(WebElement element) {
+        this.element = element;
     }
 
     /**
@@ -47,13 +54,13 @@ public class ElementMover {
      *     The additional absolute offset to shift up or down after reaching
      *     yFraction.
      */
-    public Actions moveToElement(Actions actions, WebElement element, double xFraction, double yFraction, int xOffset, int yOffset) {
+    public Actions moveToElement(Actions actions, double xFraction, double yFraction, int xOffset, int yOffset) {
         // Compute the absolute offsets relative to the top-level corner
         int absX = (int) (element.getRect().getWidth() * xFraction) + xOffset;
         int absY = (int) (element.getRect().getHeight() * yFraction) + yOffset;
 
         // Translate them into selenium-friendly coordinates (center of element is 0-0)
-        Point p = translateToCenterCoordinates(element, new Point(absX, absY));
+        Point p = translateToCenterCoordinates(new Point(absX, absY));
 
         // Add the move action and return it.
         return actions.moveToElement(element, p.getX(), p.getY());
@@ -75,15 +82,15 @@ public class ElementMover {
      *     The fraction of the element's height from the top edge of the
      *     element to move it. It is expressed as a decimal between 0 and 1.
      */
-    public Actions moveToElement(Actions actions, WebElement element, double xFraction, double yFraction) {
-        return moveToElement(actions, element, xFraction, yFraction, 0, 0);
+    public Actions moveToElement(Actions actions, double xFraction, double yFraction) {
+        return moveToElement(actions, xFraction, yFraction, 0, 0);
     }
 
     /**
      * Change coordinates based on top-left to coordinates based on center
      * point.
      */
-    public Point translateToCenterCoordinates(WebElement element, Point topLeftCoordinates) {
+    public Point translateToCenterCoordinates(Point topLeftCoordinates) {
         // It suffices to take the first set of coordinates and subtract the
         // coordinates of the center under the top-left based coordinate
         // system.
@@ -92,5 +99,5 @@ public class ElementMover {
         return new Point(topLeftCoordinates.getX() - centerX, topLeftCoordinates.getY() - centerY);
     }
 
-    private WebDriver driver;
+    private WebElement element;
 }
