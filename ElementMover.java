@@ -55,12 +55,9 @@ public class ElementMover {
      *     yFraction.
      */
     public Actions moveToElement(Actions actions, double xFraction, double yFraction, int xOffset, int yOffset) {
-        // Compute the absolute offsets relative to the top-level corner
-        int absX = (int) (element.getRect().getWidth() * xFraction) + xOffset;
-        int absY = (int) (element.getRect().getHeight() * yFraction) + yOffset;
 
         // Translate them into selenium-friendly coordinates (center of element is 0-0)
-        Point p = translateToCenterCoordinates(new Point(absX, absY));
+        Point p = translateToCenterCoordinates(xFraction, yFraction, xOffset, yOffset);
 
         // Add the move action and return it.
         return actions.moveToElement(element, p.getX(), p.getY());
@@ -84,6 +81,46 @@ public class ElementMover {
      */
     public Actions moveToElement(Actions actions, double xFraction, double yFraction) {
         return moveToElement(actions, xFraction, yFraction, 0, 0);
+    }
+
+    /**
+     * Convert the given fractional and percentage offsets from the top left
+     * corner into center-based coordinates.
+     *
+     * \param xFraction
+     *     The fraction of the element's width from the left edge of the
+     *     element to move it. It is expressed as a decimal between 0 and 1.
+     * \param yFraction
+     *     The fraction of the element's height from the top edge of the
+     *     element to move it. It is expressed as a decimal between 0 and 1.
+     * \param xOffset
+     *     The additional absolute offset to shift left or right after reaching
+     *     xFraction.
+     * \param yOffset
+     *     The additional absolute offset to shift up or down after reaching
+     *     yFraction.
+     */
+    public Point translateToCenterCoordinates(double xFraction, double yFraction, int xOffset, int yOffset) {
+        // Compute the absolute offsets relative to the top-level corner
+        int absX = (int) (element.getRect().getWidth() * xFraction) + xOffset;
+        int absY = (int) (element.getRect().getHeight() * yFraction) + yOffset;
+        return translateToCenterCoordinates(new Point(absX, absY));
+    }
+
+    /**
+     * Convert the given fractional offsets from the top left corner into
+     * center-based coordinates.
+     *
+     * \param xFraction
+     *     The fraction of the element's width from the left edge of the
+     *     element to move it. It is expressed as a decimal between 0 and 1.
+     * \param yFraction
+     *     The fraction of the element's height from the top edge of the
+     *     element to move it. It is expressed as a decimal between 0 and 1.
+     */
+    public Point translateToCenterCoordinates(double xFraction, double yFraction) {
+        // Compute the absolute offsets relative to the top-level corner
+        return translateToCenterCoordinates(xFraction, yFraction, 0, 0);
     }
 
     /**
